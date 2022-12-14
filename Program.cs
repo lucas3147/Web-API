@@ -34,6 +34,20 @@ app.MapGet("/getproductbyheader", (HttpRequest request) =>
     return request.Headers["product-code"].ToString();
 });
 
+app.MapPut("/editproduct", (Product product) =>
+{
+    var productSaved = ProductRepository.GetBy(product.Code);
+    productSaved.Name = product.Name;
+    return "Atualizado com sucesso!";
+});
+
+app.MapDelete("/removeproduct/{code}", ([FromRoute] string code) =>
+{
+    var productSaved = ProductRepository.GetBy(code);
+    ProductRepository.Remove(productSaved);
+    return "Removido com sucesso!";
+});
+
 app.Run();
 
 public static class ProductRepository
@@ -53,6 +67,11 @@ public static class ProductRepository
     public static Product GetBy(string code)
     {
         return Products.FirstOrDefault(p => p.Code == code);
+    }
+
+    public static void Remove(Product product)
+    {
+        Products.Remove(product);
     }
 }
 
